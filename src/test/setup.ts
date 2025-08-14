@@ -5,7 +5,7 @@ import { expect, beforeAll, afterEach, afterAll } from "vitest";
 import { toHaveNoViolations } from "jest-axe";
 expect.extend(toHaveNoViolations);
 
-// --- Browser-ish shims for jsdom ---
+// ---- Browser-ish shims for jsdom ----
 
 // matchMedia (used by next-themes)
 Object.defineProperty(window, "matchMedia", {
@@ -23,28 +23,38 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // ResizeObserver (used by charts/layout libs)
-class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+class ResizeObserverMock {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
 }
-(globalThis as any).ResizeObserver = ResizeObserver;
+Object.defineProperty(globalThis, "ResizeObserver", {
+  value: ResizeObserverMock,
+  configurable: true,
+});
 
 // crypto.randomUUID (used in store)
-if (!("crypto" in globalThis)) (globalThis as any).crypto = {};
-if (!(globalThis.crypto as any).randomUUID) {
-  (globalThis.crypto as any).randomUUID = () => "test-uuid";
+type CryptoWithUUID = Crypto & { randomUUID?: () => string };
+if (typeof globalThis.crypto === "undefined") {
+  Object.defineProperty(globalThis, "crypto", { value: {} });
+}
+const cryptoObj = globalThis.crypto as CryptoWithUUID;
+if (typeof cryptoObj.randomUUID !== "function") {
+  Object.defineProperty(cryptoObj, "randomUUID", {
+    value: () => "test-uuid",
+    configurable: true,
+  });
 }
 
 // Stable localStorage for jsdom
 class LocalStorageMock {
   private store = new Map<string, string>();
-  clear() { this.store.clear(); }
-  getItem(k: string) { return this.store.get(k) ?? null; }
-  setItem(k: string, v: string) { this.store.set(k, String(v)); }
-  removeItem(k: string) { this.store.delete(k); }
-  key(i: number) { return Array.from(this.store.keys())[i] ?? null; }
-  get length() { return this.store.size; }
+  clear(): void { this.store.clear(); }
+  getItem(k: string): string | null { return this.store.get(k) ?? null; }
+  setItem(k: string, v: string): void { this.store.set(k, String(v)); }
+  removeItem(k: string): void { this.store.delete(k); }
+  key(i: number): string | null { return Array.from(this.store.keys())[i] ?? null; }
+  get length(): number { return this.store.size; }
 }
 Object.defineProperty(window, "localStorage", {
   value: new LocalStorageMock(),
