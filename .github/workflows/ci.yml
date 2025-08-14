@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,8 +18,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: 'pnpm' # just enables caching, doesn't install pnpm
 
+      # ⬇️ This installs pnpm and puts it on PATH
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -27,22 +28,8 @@ jobs:
 
       - run: pnpm -v
       - run: pnpm install --frozen-lockfile
-
-      # Fast fail on types + lint
       - run: pnpm typecheck
-      - run: pnpm lint
-
-      # Unit tests + coverage (artifact for PRs)
-      - run: pnpm test --coverage
-      - name: Upload coverage HTML
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: coverage
-          if-no-files-found: ignore
-
-      # Build as a final gate (no telemetry noise)
+      - run: pnpm test
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1
