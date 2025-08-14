@@ -15,10 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Install Node (enables pnpm cache but does NOT install pnpm)
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm' # enables pnpm store cache only
+          cache: 'pnpm'
 
       # ✅ Install pnpm and put it on PATH
       - uses: pnpm/action-setup@v4
