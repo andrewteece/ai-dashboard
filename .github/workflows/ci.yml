@@ -1,4 +1,3 @@
-# .github/workflows/ci.yml
 name: CI
 on: [push, pull_request]
 
@@ -18,15 +17,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm' # just enables caching, doesn't install pnpm
+          cache: 'pnpm' # enables pnpm store cache
 
-      # ⬇️ This installs pnpm and puts it on PATH
+      # ✅ This installs pnpm and puts it on PATH
       - uses: pnpm/action-setup@v4
         with:
           version: 10
           run_install: false
 
-      - run: pnpm -v
+      - run: pnpm -v # sanity check
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
