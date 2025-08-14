@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: CI
 on: [push, pull_request]
 
@@ -14,31 +15,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Install Node (does NOT install pnpm)
+      # Node only — no pnpm cache here
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm' # enables pnpm store caching once pnpm exists
 
-      # ✅ Corepack: install/activate pnpm on PATH
-      - name: Activate pnpm via Corepack
+      # Activate pnpm via Corepack and prove it's on PATH
+      - name: Activate pnpm (Corepack)
         run: |
+          set -euxo pipefail
           corepack enable
           corepack prepare pnpm@10 --activate
           pnpm -v
           which pnpm
 
-          - run: echo "$PATH"
+      # Cache pnpm store (now that pnpm exists)
+      - name: Compute pnpm store path
+        id: pnpm-cache
+        run: echo "PNPM_STORE_PATH=$(pnpm store path)" >> $GITHUB_ENV
 
-      - name: Install deps
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-store-
+
+      - name: Install
         run: pnpm install --frozen-lockfile
         env:
-          HUSKY: 0 # optional: skip husky hooks in CI
+          HUSKY: 0 # skip local hooks in CI
 
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Tests
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
         run: pnpm test
 
       - name: Build
