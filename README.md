@@ -1,45 +1,62 @@
 # AI Dashboard
 
-A modern, feature-first **Next.js 15** app using **Tailwind CSS v4**, **TypeScript**, **Zustand**, **dnd-kit**, and **manual ShadCN-style UI** (v4-compatible). The goal is a customizable, AI-assisted analytics dashboard with draggable widgets and an assistant side panel.
+[![CI](https://github.com/andrewteece/ai-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/andrewteece/ai-dashboard/actions/workflows/ci.yml)
 
-> Status: Scaffold complete (Tailwind v4, senior file structure, UI primitives, dashboard store). Next up: header, grid, widgets, and AI panel.
+A modern, feature-first **Next.js 15** app using **Tailwind CSS v4**, **TypeScript**, **Zustand**, and manual ShadCN-style UI (v4-compatible). The goal is a customizable, AI-assisted analytics dashboard with draggable widgets and an assistant side panel.
+
+**Live:** https://ai-dashboard-1acrwhndz-andrewteeces-projects.vercel.app/
 
 ---
 
-## ✨ Features (planned & in-progress)
+## Project status
 
-- ⚡️ Next.js 15 (App Router) + TypeScript
-- 🎨 Tailwind **v4** (single import) with CSS variables for theming
-- 🧩 Manual ShadCN-style UI primitives (no CLI; Radix + CVA + tailwind-merge)
-- 🧠 Zustand store with localStorage persistence for widget layout
-- 🔀 Drag & drop layout with **dnd-kit**
+- ✅ Scaffold & structure (feature-first, senior layout)
+- ✅ Tailwind **v4** via PostCSS; global tokens; light/dark themes
+- ✅ Root layout + basic dashboard page
+- ✅ UI primitives (Button, Card, Input, Textarea, Sheet)
+- ✅ Theme provider (**next-themes**) + header toggle
+- ✅ API `/api/assistant` with **Zod** request validation (echo for now)
+- ✅ Testing: **Vitest**, React Testing Library, **MSW**, **jest-axe**
+- ✅ CI: GitHub Actions (typecheck → lint → test → build)
+- ⏳ Assistant: connect to OpenAI (non-stream → streaming)
+- ⏳ Widgets: KPI / Line / Notes polish & settings
+- ⏳ Drag-and-drop layout (dnd-kit) + persistence
+- ⏳ Blog: daily build posts to portfolio site
+
+---
+
+## ✨ Features
+
+- ⚡️ **Next.js 15** (App Router) + **TypeScript**
+- 🎨 **Tailwind v4** with a single `@import "tailwindcss"` and CSS variable tokens
+- 🧩 ShadCN-style UI primitives (Radix + CVA + tailwind-merge)
+- 🧠 **Zustand** store with `localStorage` persistence
 - 📈 Charts via **Recharts**
-- 🤖 AI Assistant (sheet UI + `/api/assistant` route; OpenAI integration to follow)
-- ♻️ Feature-first structure for clean boundaries and scale
+- 🤖 Assistant sheet UI (echo today; OpenAI next)
+- 🔀 DnD with **dnd-kit** (planned)
 
 ---
 
-## 🧰 Tech Stack
+## 🧰 Tech stack
 
-- **Framework:** Next.js 15 (App Router)
+- **Framework:** Next.js 15
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS v4, design tokens via CSS variables
-- **UI Primitives:** Radix UI + class-variance-authority + tailwind-merge (ShadCN-style)
+- **Styling:** Tailwind CSS v4
+- **UI:** Radix UI, class-variance-authority, tailwind-merge, lucide-react
 - **State:** Zustand
-- **DnD:** dnd-kit
-- **Charts:** Recharts
-- **Icons:** lucide-react
-- **Node:** 20 · **pnpm:** 9
+- **Testing:** Vitest, @testing-library/react, MSW, jest-axe
+- **Runtime:** Node 20 · **Package manager:** pnpm 10 (Corepack)
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting started
 
 ### Prerequisites
 - Node **20**
-- pnpm **9**
+- pnpm **10** (via Corepack)
+
 ```bash
 node -v
 corepack enable
-corepack prepare pnpm@9 --activate
+corepack prepare pnpm@10 --activate
 pnpm -v
