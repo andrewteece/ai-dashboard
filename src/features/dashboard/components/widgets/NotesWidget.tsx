@@ -4,7 +4,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useEffect, useState } from 'react';
 import { WidgetCard } from './WidgetCard';
 
-export function NotesWidget({ id, title = 'Notes' }: { id: string; title?: string }) {
+type Props = { id: string; title?: string };
+
+export function NotesWidget({ id, title = 'Notes' }: Props) {
   const storageKey = `notes_${id}`;
   const [val, setVal] = useState('');
 
@@ -18,12 +20,14 @@ export function NotesWidget({ id, title = 'Notes' }: { id: string; title?: strin
     <WidgetCard id={id} title={title}>
       <Textarea
         placeholder="Write notes…"
+        className="min-h-28"
         value={val}
         onChange={(e) => {
           const v = e.target.value;
           setVal(v);
           if (typeof window !== 'undefined') localStorage.setItem(storageKey, v);
         }}
+        aria-label="Notes"
       />
     </WidgetCard>
   );

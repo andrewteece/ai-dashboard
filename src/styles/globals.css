@@ -28,8 +28,40 @@
     --ring: 224.3 76.3% 48%;
   }
 
+  html {
+    height: 100%;
+  }
+
   body {
+    min-height: 100%;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    @apply antialiased;
+  }
+}
+
+/* --- App background + utilities --- */
+@layer utilities {
+  .bg-app {
+    background:
+      radial-gradient(1000px 400px at 10% -10%, hsl(var(--primary) / 0.06), transparent 40%),
+      radial-gradient(800px 300px at 110% -10%, hsl(var(--ring) / 0.05), transparent 35%),
+      linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background)));
+    position: relative;
+  }
+  .bg-app::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(1200px 500px at 50% -20%, #000 50%, transparent 80%);
+    pointer-events: none;
+  }
+
+  .ring-focused {
+    @apply ring-2 ring-[hsl(var(--ring))] ring-offset-2 ring-offset-[hsl(var(--background))] outline-none;
   }
 }

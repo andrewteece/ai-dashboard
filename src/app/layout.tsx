@@ -1,4 +1,3 @@
-// src/app/layout.tsx
 import { ThemeProvider } from '@/core/theme/theme-provider';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -8,9 +7,12 @@ import '../styles/globals.css';
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* Colors come from globals.css; Tailwind handles layout/spacing */}
-      <body className="min-h-dvh antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="antialiased">
+        <ThemeProvider>
+          <main className="bg-app min-h-dvh">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
+          </main>
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>

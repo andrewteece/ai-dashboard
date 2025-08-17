@@ -2,13 +2,15 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GripVertical, X } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { useDashboard } from '../../model/dashboard.store';
 import { useDragHandleProps } from '../dnd/drag-context';
 
 type Props = {
   id: string;
   title?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export function WidgetCard({ id, title, children }: Props) {
@@ -16,28 +18,38 @@ export function WidgetCard({ id, title, children }: Props) {
   const dragHandleProps = useDragHandleProps();
 
   return (
-    <Card className="relative shadow-sm transition hover:shadow">
-      <CardHeader className="flex flex-row items-center justify-between">
+    <Card className="relative border transition-shadow hover:shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
+
         <div className="flex items-center gap-1">
-          {/* Drag handle appears when DnD provides props */}
           {dragHandleProps && (
             <Button
               variant="ghost"
-              size="sm"
-              className="cursor-grab active:cursor-grabbing"
+              size="icon"
+              className="focus-visible:ring-focused hover:text-foreground size-8 cursor-grab text-[hsl(var(--muted-foreground))] active:cursor-grabbing"
               aria-label="Drag to reorder"
+              title="Drag to reorder"
               {...dragHandleProps}
             >
-              ⇅
+              <GripVertical className="size-4" />
             </Button>
           )}
-          <Button variant="ghost" size="sm" onClick={() => remove(id)}>
-            Remove
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:text-foreground focus-visible:ring-focused size-8 text-[hsl(var(--muted-foreground))]"
+            onClick={() => remove(id)}
+            aria-label="Remove widget"
+            title="Remove widget"
+          >
+            <X className="size-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent>{children}</CardContent>
+
+      <CardContent className="pt-0">{children}</CardContent>
     </Card>
   );
 }
