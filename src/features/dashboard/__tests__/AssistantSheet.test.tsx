@@ -1,22 +1,28 @@
-import { renderUI, screen, userEvent } from "@/test/test-utils";
-import AssistantSheet from "../components/AssistantSheet";
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import AssistantSheet from '../components/AssistantSheet';
 
-it("sends a prompt and shows the assistant echo", async () => {
-  renderUI(<AssistantSheet />);
+describe('AssistantSheet', () => {
+  it('opens, sends prompt, and shows assistant reply (MSW JSON fallback)', async () => {
+    render(<AssistantSheet />);
 
-  // Open the sheet
-  await userEvent.click(screen.getByRole("button", { name: /ask ai/i }));
-  // Ensure the sheet is open by checking its heading specifically
-  await screen.findByRole("heading", { name: /ai assistant/i });
+    // open sheet
+    const trigger = screen.getByRole('button', { name: /open assistant/i });
+    fireEvent.click(trigger);
 
-  // Type a prompt and send
-  await userEvent.type(screen.getByPlaceholderText(/write your prompt/i), "hello");
-  await userEvent.click(screen.getByRole("button", { name: /send/i }));
+    // type prompt
+    const textarea = await screen.findByRole('textbox', { name: /prompt/i });
+    fireEvent.change(textarea, { target: { value: 'Hello!' } });
 
-  // Assert on the unique content rather than a generic "assistant" label
-  await screen.findByText(/echo:\s*hello/i);
+    // send
+    const sendBtn = screen.getByRole('button', { name: /send/i });
+    fireEvent.click(sendBtn);
 
-  // (Optional) If you want to verify the role label exists, allow multiple matches:
-  const roleLabels = screen.getAllByText(/^assistant$/i);
-  expect(roleLabels.length).toBeGreaterThan(0);
+    // assistant block should appear with our MSW echo
+    const assistantBlocks = await screen.findAllByText(/echo:/i);
+    expect(assistantBlocks.length).toBeGreaterThan(0);
+
+    // Make sure most recent assistant message contains the prompt
+    const last = assistantBlocks[assistantBlocks.length - 1];
+    expect(within(last.parentElement as HTMLElement).getByText(/hello!/i)).toBeInTheDocument();
+  });
 });

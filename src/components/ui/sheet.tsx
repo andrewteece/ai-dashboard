@@ -1,85 +1,80 @@
-"use client";
+// src/components/ui/sheet.tsx
+'use client';
 
-import * as React from "react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import * as Dialog from '@radix-ui/react-dialog';
+import * as React from 'react';
 
-const Sheet = DialogPrimitive.Root;
-const SheetTrigger = DialogPrimitive.Trigger;
-const SheetClose = DialogPrimitive.Close;
+export const Sheet = Dialog.Root;
+export const SheetTrigger = Dialog.Trigger;
+export const SheetClose = Dialog.Close;
 
-function SheetPortal(props: DialogPrimitive.DialogPortalProps) {
-  return <DialogPrimitive.Portal {...props} />;
-}
+export const SheetPortal = Dialog.Portal;
 
-const SheetOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={cn(
-      "fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] transition-opacity",
-      "data-[state=open]:opacity-100 data-[state=closed]:opacity-0",
-      className
-    )}
-    {...props}
-  />
-));
-SheetOverlay.displayName = DialogPrimitive.Overlay.displayName;
-
-type SheetContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
-  side?: "left" | "right" | "top" | "bottom";
-};
-
-const sideClasses: Record<NonNullable<SheetContentProps["side"]>, string> = {
-  right: "right-0 top-0 h-full w-[520px] translate-x-full data-[state=open]:translate-x-0",
-  left: "left-0 top-0 h-full w-[520px] -translate-x-full data-[state=open]:translate-x-0",
-  top: "left-0 top-0 w-full translate-y-[-100%] data-[state=open]:translate-y-0",
-  bottom: "left-0 bottom-0 w-full translate-y-full data-[state=open]:translate-y-0",
-};
-
-const SheetContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <DialogPrimitive.Content
+export const SheetOverlay = React.forwardRef<
+  React.ElementRef<typeof Dialog.Overlay>,
+  React.ComponentPropsWithoutRef<typeof Dialog.Overlay>
+>(function SheetOverlay({ className, ...props }, ref) {
+  return (
+    <Dialog.Overlay
       ref={ref}
       className={cn(
-        "fixed z-50 grid gap-4 border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xl",
-        "transition-transform duration-300 ease-out",
-        "data-[state=closed]:pointer-events-none",
-        sideClasses[side],
-        className
+        'data-[state=open]:animate-in data-[state=closed]:animate-out fixed inset-0 z-50 bg-black/40',
+        className,
       )}
       {...props}
-    >
-      {children}
-      <SheetClose
-        className="absolute right-3 top-3 rounded p-1 opacity-70 transition hover:opacity-100 focus-visible:ring-focused"
-        aria-label="Close"
+    />
+  );
+});
+
+type Side = 'top' | 'bottom' | 'left' | 'right';
+
+const sideClasses: Record<Side, string> = {
+  right:
+    'inset-y-0 right-0 w-3/4 sm:w-[560px] data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right',
+  left: 'inset-y-0 left-0 w-3/4 sm:w-[560px] data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left',
+  top: 'inset-x-0 top-0 h-5/6 data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top',
+  bottom:
+    'inset-x-0 bottom-0 h-5/6 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom',
+};
+
+export const SheetContent = React.forwardRef<
+  React.ElementRef<typeof Dialog.Content>,
+  React.ComponentPropsWithoutRef<typeof Dialog.Content> & { side?: Side }
+>(function SheetContent({ side = 'right', className, children, ...props }, ref) {
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      <Dialog.Content
+        ref={ref}
+        className={cn(
+          'fixed z-50 grid gap-4 border bg-[hsl(var(--card))] p-4 text-[hsl(var(--card-foreground))] shadow-2xl',
+          'data-[state=open]:animate-in data-[state=closed]:animate-out',
+          sideClasses[side],
+          'sm:rounded-2xl',
+          className,
+        )}
+        {...props}
       >
-        <X className="h-4 w-4" />
-      </SheetClose>
-    </DialogPrimitive.Content>
-  </SheetPortal>
-));
-SheetContent.displayName = "SheetContent";
+        {children}
+      </Dialog.Content>
+    </SheetPortal>
+  );
+});
 
-function SheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("space-y-1.5", className)} {...props} />;
-}
-function SheetTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h2 className={cn("text-base font-semibold", className)} {...props} />;
-}
-function SheetDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-[hsl(var(--muted-foreground))]", className)} {...props} />;
-}
-function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mt-4 flex justify-end gap-2", className)} {...props} />;
+export function SheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('space-y-1.5', className)} {...props} />;
 }
 
-export { Sheet, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter };
+export function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)}
+      {...props}
+    />
+  );
+}
+
+// These MUST be Dialog.Title/Description so Radix can detect them
+export const SheetTitle = Dialog.Title;
+export const SheetDescription = Dialog.Description;

@@ -1,9 +1,9 @@
-// src/features/dashboard/components/DashboardHeader.tsx
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Activity, BarChart3, RotateCcw, StickyNote } from 'lucide-react';
 import { useDashboard } from '../model/dashboard.store';
+import AssistantSheet from './AssistantSheet';
 import { ThemeToggle } from './ThemeToggle';
 
 export function DashboardHeader() {
@@ -20,7 +20,6 @@ export function DashboardHeader() {
 
   return (
     <header className="mb-6">
-      {/* Responsive grid: mobile stacks, sm+ splits into two columns */}
       <div className="grid gap-3 sm:grid-cols-2 sm:items-end">
         <div className="space-y-1">
           <h1 className="text-xl font-semibold tracking-tight">AI Dashboard</h1>
@@ -29,11 +28,13 @@ export function DashboardHeader() {
           </p>
         </div>
 
-        {/* Actions: wrap on small, align end on sm+ */}
         <div className="mt-1 flex w-full flex-wrap items-center gap-x-2 gap-y-2 sm:justify-end">
           <div className="shrink-0">
             <ThemeToggle />
           </div>
+
+          {/* Assistant trigger */}
+          <AssistantSheet />
 
           <Button
             variant="outline"
