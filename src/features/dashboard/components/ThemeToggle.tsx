@@ -12,15 +12,20 @@ export function ThemeToggle() {
   if (!mounted) return null;
 
   const isDark = resolvedTheme === 'dark';
+  const label = isDark ? 'Light' : 'Dark';
+  const aria = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+
   return (
     <Button
       variant="outline"
       size="sm"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={aria}
+      className="gap-1.5"
     >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-      <span className="ml-2">{isDark ? 'Light' : 'Dark'}</span>
+      {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+      {/* Hide label on xs; show from sm+ */}
+      <span className="hidden sm:inline">{label}</span>
     </Button>
   );
 }
